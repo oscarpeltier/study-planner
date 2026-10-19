@@ -21,4 +21,3 @@ Les étudiants qui gèrent leurs cours et leurs échéances.
 - En tant qu’étudiant, je veux suivre le temps passé à réviser chaque matière, afin de mieux répartir mon temps de travail.
 - En tant qu’étudiant, je veux diviser mes grands projets en plusieurs petites étapes, afin de faciliter leur réalisation.
 - En tant qu’étudiant, je veux consulter un tableau de bord de mes tâches et de mes révisions, afin de visualiser mon avancement et de mieux gérer ma charge de travail.
-- 

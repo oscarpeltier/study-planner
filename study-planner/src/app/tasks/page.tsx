@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 type Task = {
   id?: string;
   title: string;
+  description?: string;
   due: string;
   completed: boolean;
   course?: string;
@@ -137,6 +138,11 @@ export default function TasksPage() {
                     Terminée
                   </label>
                 </div>
+                {task.description && (
+                  <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-slate-600">
+                    {task.description}
+                  </p>
+                )}
                 <p className="mt-4 flex items-center gap-2 text-sm text-slate-500">
                   <span aria-hidden="true">◷</span> Échéance : {task.due}
                 </p>

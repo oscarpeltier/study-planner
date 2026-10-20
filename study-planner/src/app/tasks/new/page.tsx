@@ -7,6 +7,7 @@ import { useState, type FormEvent } from "react";
 export default function NewTaskPage() {
   const router = useRouter();
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [due, setDue] = useState("");
   const [course, setCourse] = useState("");
   const [priority, setPriority] = useState<"low" | "medium" | "high">("medium");
@@ -25,6 +26,7 @@ export default function NewTaskPage() {
       const task = {
         id: window.crypto.randomUUID(),
         title: title.trim(),
+        description: description.trim(),
         due,
         course: course.trim(),
         priority,
@@ -64,6 +66,19 @@ export default function NewTaskPage() {
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
                 placeholder="Ex. Réviser le chapitre 3"
+                className={inputClassName}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="description" className="text-sm font-semibold text-slate-700">Description</label>
+              <textarea
+                id="description"
+                name="description"
+                rows={4}
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                placeholder="Ajoute des détails ou les étapes à suivre…"
                 className={inputClassName}
               />
             </div>

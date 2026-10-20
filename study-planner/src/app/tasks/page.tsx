@@ -22,11 +22,20 @@ export default function TasksPage() {
 
     async function loadTasks() {
       try {
+        const savedTasks = window.localStorage.getItem("study-planner:tasks");
+        if (savedTasks !== null) {
+          const data: unknown = JSON.parse(savedTasks);
+          if (!Array.isArray(data)) throw new Error("Les tâches enregistrées dans ce navigateur sont invalides.");
+          setTasks(data as Task[]);
+          return;
+        }
+
         const response = await fetch("/api/tasks", { signal: controller.signal });
         if (!response.ok) throw new Error("Impossible de charger les tâches.");
         const data: unknown = await response.json();
         if (!Array.isArray(data)) throw new Error("La réponse de l’API est invalide.");
         setTasks(data as Task[]);
+        window.localStorage.setItem("study-planner:tasks", JSON.stringify(data));
       } catch (fetchError) {
         if (fetchError instanceof Error && fetchError.name !== "AbortError") {
           setError(fetchError.message);
@@ -48,24 +57,12 @@ export default function TasksPage() {
 
     setUpdateError(null);
     // Met à jour l’interface immédiatement, puis restaure l’état précédent en cas d’erreur.
-    setTasks((current) => current.map((item) => item.id === task.id ? { ...item, completed } : item));
-    try {
-      const response = await fetch("/api/tasks", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: task.id, completed }),
-      });
-      if (!response.ok) {
-        const result: unknown = await response.json().catch(() => null);
-        const message = typeof result === "object" && result !== null && "error" in result
-          ? String(result.error)
-          : "La mise à jour n’a pas pu être enregistrée.";
-        throw new Error(message);
-      }
-    } catch (updateFailure) {
-      setTasks((current) => current.map((item) => item.id === task.id ? { ...item, completed: task.completed } : item));
-      setUpdateError(updateFailure instanceof Error ? updateFailure.message : "Impossible d’enregistrer le statut de la tâche.");
-    }
+    setTasks((current) => {
+      const updated = current.map((item) => item.id === task.id ? { ...item, completed } : item);
+      window.localStorage.setItem("study-planner:tasks", JSON.stringify(updated));
+      return updated;
+    });
+    setUpdateError(null);
   }
 
   const completedCount = tasks.filter((task) => task.completed).length;

@@ -25,7 +25,7 @@
     "dueDate": "2026-03-22",
     "subject": "History",
     "priority": "high",
-    "completed": false,
+    "completed": true,
     "due": "2026-03-22",
     "course": "History"
   },
@@ -40,7 +40,7 @@
     "id": "5c9a941c-24fb-4b03-9191-c6b7912f06c9",
     "title": "foot",
     "due": "2027-08-08",
-    "completed": false,
+    "completed": true,
     "course": "Sport",
     "priority": "low"
   }

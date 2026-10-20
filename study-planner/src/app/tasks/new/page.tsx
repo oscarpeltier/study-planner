@@ -19,19 +19,18 @@ export default function NewTaskPage() {
     setError(null);
 
     try {
-      const response = await fetch("/api/tasks", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, due, course, priority, completed: false }),
-      });
-
-      if (!response.ok) {
-        const result: unknown = await response.json().catch(() => null);
-        const message = typeof result === "object" && result !== null && "error" in result
-          ? String(result.error)
-          : "Impossible d’ajouter la tâche.";
-        throw new Error(message);
-      }
+      const savedTasks = window.localStorage.getItem("study-planner:tasks");
+      const existingTasks: unknown = savedTasks === null ? [] : JSON.parse(savedTasks);
+      if (!Array.isArray(existingTasks)) throw new Error("Les tâches enregistrées dans ce navigateur sont invalides.");
+      const task = {
+        id: window.crypto.randomUUID(),
+        title: title.trim(),
+        due,
+        course: course.trim(),
+        priority,
+        completed: false,
+      };
+      window.localStorage.setItem("study-planner:tasks", JSON.stringify([...existingTasks, task]));
 
       router.push("/tasks");
     } catch (submitError) {

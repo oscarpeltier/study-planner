@@ -1,36 +1,23 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# StudyPlanner
+Une application de gestion de tâches pour étudiants.
 
-## Getting Started
+## Utilisateurs cibles
+Les étudiants qui gèrent leurs cours et leurs échéances.
 
-First, run the development server:
+## Fonctionnalités
+- Créer des tâches avec un titre, une échéance et une priorité
+- Afficher toutes les tâches dans une liste
+- Marquer les tâches comme terminées
+- Filtrer les tâches par matière
+- Définir des niveaux de priorité (basse / moyenne / haute)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Stack technique
+- Next.js (framework React)
+- Déployé sur Vercel
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## user stories
+- En tant qu’étudiant, je veux organiser mes révisions dans un calendrier, afin de mieux planifier mon temps de travail.
+- En tant qu’étudiant, je veux recevoir des rappels avant la date limite d’un devoir, afin de ne pas oublier mes échéances.
+- En tant qu’étudiant, je veux suivre le temps passé à réviser chaque matière, afin de mieux répartir mon temps de travail.
+- En tant qu’étudiant, je veux diviser mes grands projets en plusieurs petites étapes, afin de faciliter leur réalisation.
+- En tant qu’étudiant, je veux consulter un tableau de bord de mes tâches et de mes révisions, afin de visualiser mon avancement et de mieux gérer ma charge de travail.

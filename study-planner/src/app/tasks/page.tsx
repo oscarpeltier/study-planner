@@ -15,6 +15,7 @@ export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [updateError, setUpdateError] = useState<string | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -39,6 +40,34 @@ export default function TasksPage() {
     return () => controller.abort();
   }, []);
 
+  async function updateCompletion(task: Task, completed: boolean) {
+    if (!task.id) {
+      setUpdateError("Cette tâche n’a pas d’identifiant et ne peut pas être mise à jour.");
+      return;
+    }
+
+    setUpdateError(null);
+    // Met à jour l’interface immédiatement, puis restaure l’état précédent en cas d’erreur.
+    setTasks((current) => current.map((item) => item.id === task.id ? { ...item, completed } : item));
+    try {
+      const response = await fetch("/api/tasks", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: task.id, completed }),
+      });
+      if (!response.ok) {
+        const result: unknown = await response.json().catch(() => null);
+        const message = typeof result === "object" && result !== null && "error" in result
+          ? String(result.error)
+          : "La mise à jour n’a pas pu être enregistrée.";
+        throw new Error(message);
+      }
+    } catch (updateFailure) {
+      setTasks((current) => current.map((item) => item.id === task.id ? { ...item, completed: task.completed } : item));
+      setUpdateError(updateFailure instanceof Error ? updateFailure.message : "Impossible d’enregistrer le statut de la tâche.");
+    }
+  }
+
   const completedCount = tasks.filter((task) => task.completed).length;
 
   return (
@@ -60,6 +89,8 @@ export default function TasksPage() {
             </div>
           </div>
         </header>
+
+        {updateError && <p role="alert" className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">{updateError}</p>}
 
         {isLoading ? (
           <p role="status" className="rounded-3xl border border-slate-100 bg-white p-8 text-center text-slate-600 shadow-sm">
@@ -94,9 +125,21 @@ export default function TasksPage() {
                     {task.completed ? "Terminée" : "À faire"}
                   </span>
                 </div>
-                <h2 className={`mt-6 text-lg font-semibold leading-snug ${task.completed ? "text-slate-500 line-through" : "text-slate-900"}`}>
-                  {task.title}
-                </h2>
+                <div className="mt-6 flex items-start justify-between gap-4">
+                  <h2 className={`text-lg font-semibold leading-snug ${task.completed ? "text-slate-500 line-through" : "text-slate-900"}`}>
+                    {task.title}
+                  </h2>
+                  <label className="flex shrink-0 cursor-pointer items-center gap-2 text-sm font-medium text-slate-600">
+                    <input
+                      type="checkbox"
+                      checked={task.completed}
+                      onChange={(event) => void updateCompletion(task, event.target.checked)}
+                      aria-label={`Marquer « ${task.title} » comme terminée`}
+                      className="h-4 w-4 accent-emerald-700"
+                    />
+                    Terminée
+                  </label>
+                </div>
                 <p className="mt-4 flex items-center gap-2 text-sm text-slate-500">
                   <span aria-hidden="true">◷</span> Échéance : {task.due}
                 </p>

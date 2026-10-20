@@ -48,6 +48,36 @@ export async function GET() {
   }
 }
 
+export async function PATCH(request: Request) {
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Le corps doit être un JSON valide." }, { status: 400 });
+  }
+
+  if (typeof body !== "object" || body === null) {
+    return NextResponse.json({ error: "Les données sont invalides." }, { status: 400 });
+  }
+
+  const input = body as Record<string, unknown>;
+  if ((typeof input.id !== "string" && typeof input.id !== "number") || typeof input.completed !== "boolean") {
+    return NextResponse.json({ error: "Un identifiant et un statut completed booléen sont requis." }, { status: 400 });
+  }
+
+  try {
+    const tasks = await readTasks();
+    const task = tasks.find((item) => String(item.id) === String(input.id));
+    if (!task) return NextResponse.json({ error: "Tâche introuvable." }, { status: 404 });
+
+    task.completed = input.completed;
+    await writeFile(tasksFile, `${JSON.stringify(tasks, null, 2)}\n`, "utf8");
+    return NextResponse.json(task);
+  } catch {
+    return NextResponse.json({ error: "Impossible de mettre à jour la tâche." }, { status: 500 });
+  }
+}
+
 export async function POST(request: Request) {
   let body: unknown;
   try {

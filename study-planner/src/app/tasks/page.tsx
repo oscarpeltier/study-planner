@@ -1,0 +1,110 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+type Task = {
+  id?: string;
+  title: string;
+  due: string;
+  completed: boolean;
+  course?: string;
+};
+
+export default function TasksPage() {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadTasks() {
+      try {
+        const response = await fetch("/api/tasks", { signal: controller.signal });
+        if (!response.ok) throw new Error("Impossible de charger les tâches.");
+        const data: unknown = await response.json();
+        if (!Array.isArray(data)) throw new Error("La réponse de l’API est invalide.");
+        setTasks(data as Task[]);
+      } catch (fetchError) {
+        if (fetchError instanceof Error && fetchError.name !== "AbortError") {
+          setError(fetchError.message);
+        }
+      } finally {
+        if (!controller.signal.aborted) setIsLoading(false);
+      }
+    }
+
+    void loadTasks();
+    return () => controller.abort();
+  }, []);
+
+  const completedCount = tasks.filter((task) => task.completed).length;
+
+  return (
+    <main className="min-h-screen bg-[#f7f8f4] px-6 py-12 text-slate-900 sm:py-16">
+      <div className="mx-auto max-w-5xl">
+        <header className="mb-10 mt-8 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+          <div>
+            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">Ton organisation</p>
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Mes tâches</h1>
+            <p className="mt-3 text-slate-600">Chaque tâche terminée te rapproche de tes objectifs.</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link href="/tasks/new" className="rounded-full bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-700">
+              Nouvelle tâche
+            </Link>
+            <div className="rounded-2xl border border-emerald-100 bg-white px-5 py-4 shadow-sm">
+              <p className="text-sm text-slate-500">Progression</p>
+              <p className="mt-1 text-xl font-semibold">{completedCount} <span className="text-base font-normal text-slate-500">/ {tasks.length} terminées</span></p>
+            </div>
+          </div>
+        </header>
+
+        {isLoading ? (
+          <p role="status" className="rounded-3xl border border-slate-100 bg-white p-8 text-center text-slate-600 shadow-sm">
+            Chargement des tâches…
+          </p>
+        ) : error ? (
+          <p role="alert" className="rounded-3xl border border-red-100 bg-white p-8 text-center text-red-700 shadow-sm">
+            {error}
+          </p>
+        ) : tasks.length === 0 ? (
+          <p className="rounded-3xl border border-slate-100 bg-white p-8 text-center text-slate-600 shadow-sm">
+            Aucune tâche pour le moment.
+          </p>
+        ) : (
+          <section aria-label="Liste des tâches" className="grid gap-4 sm:grid-cols-2">
+            {tasks.map((task, index) => (
+              <article
+                key={task.id ?? `${task.title}-${index}`}
+                className={`rounded-3xl border bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${
+                  task.completed ? "border-emerald-100" : "border-slate-100"
+                }`}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  {task.course ? (
+                    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                      {task.course}
+                    </span>
+                  ) : <span />}
+                  <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${
+                    task.completed ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"
+                  }`}>
+                    {task.completed ? "Terminée" : "À faire"}
+                  </span>
+                </div>
+                <h2 className={`mt-6 text-lg font-semibold leading-snug ${task.completed ? "text-slate-500 line-through" : "text-slate-900"}`}>
+                  {task.title}
+                </h2>
+                <p className="mt-4 flex items-center gap-2 text-sm text-slate-500">
+                  <span aria-hidden="true">◷</span> Échéance : {task.due}
+                </p>
+              </article>
+            ))}
+          </section>
+        )}
+      </div>
+    </main>
+  );
+}

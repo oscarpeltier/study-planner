@@ -1,0 +1,47 @@
+[
+  {
+    "id": "1",
+    "title": "DM de japonais",
+    "dueDate": "2026-03-20",
+    "subject": "Mathematics",
+    "priority": "high",
+    "completed": false,
+    "due": "2026-03-20",
+    "course": "Mathematics"
+  },
+  {
+    "id": "2",
+    "title": "Cours de chant",
+    "dueDate": "2026-03-18",
+    "subject": "Literature",
+    "priority": "high",
+    "completed": true,
+    "due": "2026-03-18",
+    "course": "Literature"
+  },
+  {
+    "id": "3",
+    "title": "Lire un livre",
+    "dueDate": "2026-03-22",
+    "subject": "History",
+    "priority": "high",
+    "completed": false,
+    "due": "2026-03-22",
+    "course": "History"
+  },
+  {
+    "id": "60fbf843-5e51-4b2a-98fe-15f6d747108a",
+    "title": "crée une apli",
+    "due": "2027-04-06",
+    "completed": false,
+    "course": ""
+  },
+  {
+    "id": "5c9a941c-24fb-4b03-9191-c6b7912f06c9",
+    "title": "foot",
+    "due": "2027-08-08",
+    "completed": false,
+    "course": "Sport",
+    "priority": "low"
+  }
+]

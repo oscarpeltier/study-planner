@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type Task = {
@@ -10,9 +11,11 @@ type Task = {
   due: string;
   completed: boolean;
   course?: string;
+  priority?: "low" | "medium" | "high";
 };
 
 export default function TasksPage() {
+  const router = useRouter();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -73,6 +76,7 @@ export default function TasksPage() {
       <div className="mx-auto max-w-5xl">
         <header className="mb-10 mt-8 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
           <div>
+            <p className="mb-2 text-sm font-semibold text-emerald-700">Bonjour Oscar</p>
             <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">Ton organisation</p>
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Mes tâches</h1>
             <p className="mt-3 text-slate-600">Chaque tâche terminée te rapproche de tes objectifs.</p>
@@ -107,7 +111,19 @@ export default function TasksPage() {
             {tasks.map((task, index) => (
               <article
                 key={task.id ?? `${task.title}-${index}`}
-                className={`rounded-3xl border bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${
+                onClick={() => {
+                  if (task.id) router.push(`/tasks/${encodeURIComponent(task.id)}`);
+                }}
+                onKeyDown={(event) => {
+                  if (task.id && (event.key === "Enter" || event.key === " ")) {
+                    event.preventDefault();
+                    router.push(`/tasks/${encodeURIComponent(task.id)}`);
+                  }
+                }}
+                role={task.id ? "link" : undefined}
+                tabIndex={task.id ? 0 : undefined}
+                aria-label={task.id ? `Ouvrir la tâche ${task.title}` : undefined}
+                className={`rounded-3xl border bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 ${
                   task.completed ? "border-emerald-100" : "border-slate-100"
                 }`}
               >

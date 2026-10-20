@@ -15,6 +15,9 @@ export default function Home() {
         </div>
 
         <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">
+          Bonjour Oscar
+        </p>
+        <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">
           Ton espace pour avancer
         </p>
         <h1 className="max-w-xl text-4xl font-bold leading-tight tracking-tight sm:text-6xl">
